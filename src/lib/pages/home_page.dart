@@ -24,7 +24,8 @@ class _HomePageState extends State<HomePage> {
 
   void goToSong(int index) {
     playlistProvider.setCurrentSongIndex(index);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const SongPage()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const SongPage()));
   }
 
   @override
@@ -39,7 +40,12 @@ class _HomePageState extends State<HomePage> {
         ),
         elevation: 0,
       ),
-      drawer: const MyDrawer(),
+      drawer: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Theme.of(context).colorScheme.inversePrimary,
+        ),
+        child: const MyDrawer(),
+      ),
       body: Consumer<PlaylistProvider>(
         builder: (context, value, child) {
           final List<Song> playlist = value.playlist;
@@ -49,9 +55,25 @@ class _HomePageState extends State<HomePage> {
               final Song song = playlist[index];
 
               return ListTile(
-                title: Text(song.songName),
-                subtitle: Text(song.artistName),
-                leading: Image.asset(song.albumArtImagePath),
+                title: Text(song.songName,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.inversePrimary)),
+                subtitle: Text(
+                  song.artistName,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary),
+                ),
+                leading: ClipRRect(
+                  borderRadius: BorderRadius.circular(
+                      20.0), // Set the rounded corner radius here
+                  child: Image.asset(
+                    song.albumArtImagePath, // Replace with your image url
+                    width: 100, // Set your width
+                    height: 200, // Set your height
+                    fit: BoxFit
+                        .cover, // Use BoxFit.cover to keep the image aspect ratio
+                  ),
+                ),
                 onTap: (() => goToSong(index)),
               );
             },
