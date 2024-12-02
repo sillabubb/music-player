@@ -1,1 +1,0 @@
- /Users/tomaswesterlund/Development/GitHub/minimalist-music-player/src/.dart_tool/flutter_build/0197169e22dc3ed4a391486fede8379c/native_assets.yaml: 
