@@ -240,7 +240,7 @@ class SongPage extends StatelessWidget {
                                 );
                               },
                             ),
-                            // Lyrics button
+                            // Lyrics button with autoscroll
                             IconButton(
                               icon: Icon(
                                 Icons.music_note_outlined,
@@ -248,30 +248,96 @@ class SongPage extends StatelessWidget {
                                 Theme.of(context).colorScheme.inversePrimary,
                               ),
                               onPressed: () {
+                                final ScrollController scrollController =
+                                ScrollController();
+                                bool isScrolling = false;
+
                                 // Show lyrics dialog
                                 showDialog(
                                   context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text(
-                                        'Lyrics for ${currentSong.songName}'),
-                                    content: SingleChildScrollView(
-                                      child: Text(
-                                        currentSong.lyrics,
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .inversePrimary,
-                                        ),
-                                      ),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context),
-                                        child: const Text('Close'),
-                                      ),
-                                    ],
-                                  ),
+                                  builder: (context) {
+                                    return StatefulBuilder(
+                                      builder: (context, setState) {
+                                        return AlertDialog(
+                                          title: Text(
+                                              'Lyrics for ${currentSong.songName}'),
+                                          content: SizedBox(
+                                            height: 400,
+                                            child: SingleChildScrollView(
+                                              controller: scrollController,
+                                              child: Text(
+                                                currentSong.lyrics,
+                                                style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .inversePrimary,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          actions: [
+                                            // Autoscroll button
+                                            Row(
+                                              children: [
+                                                IconButton(
+                                                  icon: Icon(
+                                                    isScrolling
+                                                        ? Icons.pause
+                                                        : Icons.play_arrow,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .inversePrimary,
+                                                  ),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      isScrolling = !isScrolling;
+                                                    });
+
+                                                    if (isScrolling) {
+                                                      Future.doWhile(() async {
+                                                        if (!isScrolling ||
+                                                            !scrollController
+                                                                .hasClients) {
+                                                          return false;
+                                                        }
+                                                        scrollController.animateTo(
+                                                          scrollController.offset +
+                                                              2.0,
+                                                          duration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                              100),
+                                                          curve: Curves.linear,
+                                                        );
+                                                        await Future.delayed(
+                                                            const Duration(
+                                                                milliseconds:
+                                                                100));
+                                                        return isScrolling;
+                                                      });
+                                                    }
+                                                  },
+                                                ),
+                                                Text(
+                                                  "Autoscroll",
+                                                  style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .inversePrimary,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text('Close'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
                                 );
                               },
                             ),
