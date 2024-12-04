@@ -40,7 +40,7 @@ class AboutUsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8.0),
                   Text(
-                    "Huni is a mobile music player app built with Flutter, created by three friends who are 3rd-year Computer Science students at Angeles University Foundation. Developed as their final project for CSE20 - Mobile Application Development, Huni focuses on functionality and usability, making it a reliable app for enjoying your favorite tunes.",
+                    "Huni is a mobile music player app built with Flutter, created by three 3rd-year Computer Science students at Angeles University Foundation. Developed as their final project for CSE20 - Mobile Application Development, Huni focuses on functionality and usability, making it a reliable app for enjoying your favorite tunes.",
                     style: TextStyle(
                       color: theme.inversePrimary.withOpacity(0.7),
                       fontSize: 16.0,
