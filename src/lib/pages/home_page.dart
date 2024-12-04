@@ -289,7 +289,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.pop(context); // Close search dialog
               },
-              child: const Text("Done"),
+              child: const Text("Done "),
             ),
           ],
         );
