@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:minimalist_music_player/models/song.dart';
+import 'dart:async';
 
 class PlaylistProvider extends ChangeNotifier {
   final List<Song> _playlist = [
@@ -994,7 +995,7 @@ Gmaj7 Am7 Bm7 D9 (G)
         songName: "From The Start",
         artistName: "Laufey",
         albumArtImagePath: "assets/images/fmt.jpg",
-        audioPath: "audio/juno.mp3",
+        audioPath: "audio/from_the_start.mp3",
       lyrics: """[Intro]
 Gbmaj7 Ab Dbmaj7
  
@@ -2199,6 +2200,10 @@ Sa islang pantropiko
         setCurrentSongIndex(playlist.length - 1);
       }
     }
+  }
+  void updateCurrentDuration(Duration newDuration) {
+    _currentDuration = newDuration;
+    notifyListeners();
   }
 
   void listenToDuration() {

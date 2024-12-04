@@ -12,13 +12,12 @@ class FavoritesPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Favorites"),
+        title: const Text("F A V O R I T E S"),
         backgroundColor: theme.background,
         iconTheme: IconThemeData(color: theme.inversePrimary),
         titleTextStyle: TextStyle(
           color: theme.inversePrimary,
           fontSize: 20,
-          fontWeight: FontWeight.bold,
         ),
       ),
       backgroundColor: theme.background,
@@ -118,62 +117,95 @@ class FavoritesPage extends StatelessWidget {
                 child: Container(
                   color: theme.secondary.withOpacity(0.5),
                   padding: const EdgeInsets.all(12.0),
-                  child: Row(
+                  child: Column(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.asset(
-                          currentSong.albumArtImagePath,
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              currentSong.songName,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: theme.inversePrimary,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Image.asset(
+                              currentSong.albumArtImagePath,
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
                             ),
-                            Text(
-                              currentSong.artistName,
-                              style: TextStyle(
-                                color: theme.inversePrimary.withOpacity(0.7),
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  currentSong.songName,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.inversePrimary,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  currentSong.artistName,
+                                  style: TextStyle(
+                                    color:
+                                    theme.inversePrimary.withOpacity(0.7),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.skip_previous),
+                            color: theme.inversePrimary,
+                            onPressed: () {
+                              playlistProvider.playPreviousSong();
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              playlistProvider.isPlaying
+                                  ? Icons.pause
+                                  : Icons.play_arrow,
+                            ),
+                            color: theme.inversePrimary,
+                            onPressed: playlistProvider.pauseOrResume,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.skip_next),
+                            color: theme.inversePrimary,
+                            onPressed: () {
+                              playlistProvider.playNextSong();
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8.0),
+                      // Slider for playback progress
+                      SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          thumbShape: const RoundSliderThumbShape(
+                            enabledThumbRadius: 0,
+                          ),
                         ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.skip_previous),
-                        color: theme.inversePrimary,
-                        onPressed: () {
-                          playlistProvider.playPreviousSong();
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          playlistProvider.isPlaying
-                              ? Icons.pause
-                              : Icons.play_arrow,
+                        child: Slider(
+                          min: 0,
+                          max: playlistProvider.totalDuration.inSeconds
+                              .toDouble(),
+                          value: playlistProvider.currentDuration.inSeconds
+                              .toDouble(),
+                          activeColor: Colors.green,
+                          onChanged: (value) {
+                            // Update the slider dynamically
+                            playlistProvider.updateCurrentDuration(
+                                Duration(seconds: value.toInt()));
+                          },
+                          onChangeEnd: (value) {
+                            // Seek the audio to the dragged position
+                            playlistProvider
+                                .seek(Duration(seconds: value.toInt()));
+                          },
                         ),
-                        color: theme.inversePrimary,
-                        onPressed: playlistProvider.pauseOrResume,
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.skip_next),
-                        color: theme.inversePrimary,
-                        onPressed: () {
-                          playlistProvider.playNextSong();
-                        },
                       ),
                     ],
                   ),

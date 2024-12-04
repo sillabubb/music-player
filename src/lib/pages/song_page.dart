@@ -24,8 +24,10 @@ class SongPage extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.background,
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0, bottom: 25.0),
-              child: SingleChildScrollView( // Wrap the Column inside SingleChildScrollView
+              padding:
+              const EdgeInsets.only(left: 25.0, right: 25.0, bottom: 25.0),
+              child: SingleChildScrollView(
+                // Wrap the Column inside SingleChildScrollView
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -33,7 +35,8 @@ class SongPage extends StatelessWidget {
                     const SizedBox(height: 25),
                     Container(
                       height: 25,
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 20.0),
                       alignment: Alignment.center,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -48,8 +51,9 @@ class SongPage extends StatelessWidget {
                               icon: Icon(
                                 Icons.arrow_back,
                                 size: 30,
-                                color:
-                                Theme.of(context).colorScheme.inversePrimary,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
                               ),
                             ),
                           ),
@@ -61,24 +65,43 @@ class SongPage extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 24.0,
                                 fontWeight: FontWeight.normal,
-                                color:
-                                Theme.of(context).colorScheme.inversePrimary,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
                               ),
                             ),
                           ),
-                          // Menu button
+                          // Menu button with PopupMenuButton
                           Container(
                             height: 60,
                             width: 60,
                             alignment: Alignment.center,
-                            child: IconButton(
-                              onPressed: () {},
+                            child: PopupMenuButton<String>(
                               icon: Icon(
                                 Icons.menu,
                                 size: 30,
-                                color:
-                                Theme.of(context).colorScheme.inversePrimary,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
                               ),
+                              onSelected: (value) {
+                                if (value == 'add_to_favorites') {
+                                  playlistProvider.toggleFavorite(currentSong);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          '${currentSong.songName} added to favorites!'),
+                                      duration: const Duration(seconds: 2),
+                                    ),
+                                  );
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                const PopupMenuItem<String>(
+                                  value: 'add_to_favorites',
+                                  child: Text('Add to Favorites'),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -98,12 +121,14 @@ class SongPage extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.all(15.0),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 // Song and artist details
                                 Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       currentSong.songName,
@@ -126,48 +151,17 @@ class SongPage extends StatelessWidget {
                                   ],
                                 ),
 
-                                // Center Notes if they exist
-                                if (playlistProvider
-                                    .getNoteForCurrentSong()
-                                    .isNotEmpty) ...[
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "Note:",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.0,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .inversePrimary,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8.0),
-                                        Text(
-                                          playlistProvider.getNoteForCurrentSong(),
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .inversePrimary,
-                                            fontSize: 12.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-
                                 // Favorites icon
                                 IconButton(
                                   icon: Icon(
                                     Icons.favorite,
-                                    color: isFavorite ? Colors.red : Colors.grey,
+                                    color: isFavorite
+                                        ? Colors.red
+                                        : Colors.grey,
                                   ),
                                   onPressed: () {
-                                    playlistProvider.toggleFavorite(currentSong);
+                                    playlistProvider
+                                        .toggleFavorite(currentSong);
                                   },
                                 ),
                               ],
@@ -181,31 +175,36 @@ class SongPage extends StatelessWidget {
                     Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 25.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
                             children: [
                               // Start time
                               Text(
-                                formatTime(playlistProvider.currentDuration),
+                                formatTime(
+                                    playlistProvider.currentDuration),
                                 style: TextStyle(
-                                  color:
-                                  Theme.of(context).colorScheme.inversePrimary,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary,
                                 ),
                               ),
                               // Notes button
                               IconButton(
                                 icon: Icon(
                                   Icons.note_add,
-                                  color:
-                                  Theme.of(context).colorScheme.inversePrimary,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary,
                                 ),
                                 onPressed: () {
-                                  // Show dialog to add/edit notes
                                   showDialog(
                                     context: context,
                                     builder: (context) {
-                                      final TextEditingController noteController =
+                                      final TextEditingController
+                                      noteController =
                                       TextEditingController(
                                         text: playlistProvider
                                             .getNoteForCurrentSong(),
@@ -215,23 +214,28 @@ class SongPage extends StatelessWidget {
                                         content: TextField(
                                           controller: noteController,
                                           maxLines: 4,
-                                          decoration: const InputDecoration(
-                                            hintText: 'Enter your note here...',
+                                          decoration:
+                                          const InputDecoration(
+                                            hintText:
+                                            'Enter your note here...',
                                             border: OutlineInputBorder(),
                                           ),
                                         ),
                                         actions: [
                                           TextButton(
                                             onPressed: () {
-                                              Navigator.pop(context); // Close dialog
+                                              Navigator.pop(
+                                                  context); // Close dialog
                                             },
                                             child: const Text('Cancel'),
                                           ),
                                           ElevatedButton(
                                             onPressed: () {
-                                              playlistProvider.setNoteForCurrentSong(
+                                              playlistProvider
+                                                  .setNoteForCurrentSong(
                                                   noteController.text);
-                                              Navigator.pop(context); // Save and close
+                                              Navigator.pop(
+                                                  context); // Save and close
                                             },
                                             child: const Text('Save'),
                                           ),
@@ -245,17 +249,18 @@ class SongPage extends StatelessWidget {
                               IconButton(
                                 icon: Icon(
                                   Icons.music_note_outlined,
-                                  color:
-                                  Theme.of(context).colorScheme.inversePrimary,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary,
                                 ),
                                 onPressed: () {
-                                  // Show lyrics dialog
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
                                       title: Text(
-                                          'Lyrics for ${currentSong.songName}'),
-                                      content: SingleChildScrollView( // Automatically scrolls when content exceeds dialog height
+                                          '${currentSong.songName}'),
+                                      content: SingleChildScrollView(
+                                        // Automatically scrolls when content exceeds dialog height
                                         child: Text(
                                           currentSong.lyrics,
                                           style: TextStyle(
@@ -278,10 +283,12 @@ class SongPage extends StatelessWidget {
                               ),
                               // End time
                               Text(
-                                formatTime(playlistProvider.totalDuration),
+                                formatTime(
+                                    playlistProvider.totalDuration),
                                 style: TextStyle(
-                                  color:
-                                  Theme.of(context).colorScheme.inversePrimary,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary,
                                 ),
                               ),
                             ],
@@ -289,21 +296,24 @@ class SongPage extends StatelessWidget {
                         ),
                         SliderTheme(
                           data: SliderTheme.of(context).copyWith(
-                            thumbShape: const RoundSliderThumbShape(
+                            thumbShape:
+                            const RoundSliderThumbShape(
                               enabledThumbRadius: 0,
                             ),
                           ),
                           child: Slider(
                             min: 0,
-                            max: playlistProvider.totalDuration.inSeconds
+                            max: playlistProvider
+                                .totalDuration.inSeconds
                                 .toDouble(),
-                            value: playlistProvider.currentDuration.inSeconds
+                            value: playlistProvider
+                                .currentDuration.inSeconds
                                 .toDouble(),
                             activeColor: Colors.green,
                             onChanged: (value) {},
                             onChangeEnd: (value) {
-                              playlistProvider
-                                  .seek(Duration(seconds: value.toInt()));
+                              playlistProvider.seek(Duration(
+                                  seconds: value.toInt()));
                             },
                           ),
                         ),

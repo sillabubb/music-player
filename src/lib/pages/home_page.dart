@@ -172,60 +172,84 @@ class _HomePageState extends State<HomePage> {
               child: Container(
                 color: theme.secondary.withOpacity(0.5),
                 padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: Image.asset(
-                        playlistProvider.playlist[selectedSongIndex]
-                            .albumArtImagePath,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            playlistProvider
-                                .playlist[selectedSongIndex].songName,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: theme.inversePrimary,
-                            ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.asset(
+                            playlistProvider.playlist[selectedSongIndex]
+                                .albumArtImagePath,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
                           ),
-                          Text(
-                            playlistProvider
-                                .playlist[selectedSongIndex].artistName,
-                            style: TextStyle(
-                              color: theme.inversePrimary.withOpacity(0.7),
-                            ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                playlistProvider
+                                    .playlist[selectedSongIndex].songName,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.inversePrimary,
+                                ),
+                              ),
+                              Text(
+                                playlistProvider
+                                    .playlist[selectedSongIndex].artistName,
+                                style: TextStyle(
+                                  color: theme.inversePrimary.withOpacity(0.7),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.skip_previous),
+                          color: theme.inversePrimary,
+                          onPressed: goToPreviousSong,
+                        ),
+                        IconButton(
+                          icon: Icon(playlistProvider.isPlaying ? Icons.pause : Icons.play_arrow),
+                          color: theme.inversePrimary,
+                          onPressed: () {
+                            playlistProvider.pauseOrResume();
+                            setState(() {});
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.skip_next),
+                          color: theme.inversePrimary,
+                          onPressed: goToNextSong,
+                        ),
+                      ],
+                    ),
+                    SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        thumbShape: const RoundSliderThumbShape(
+                          enabledThumbRadius: 0,
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.skip_previous),
-                      color: theme.inversePrimary,
-                      onPressed: goToPreviousSong,
-                    ),
-                    IconButton(
-                      icon: Icon(playlistProvider.isPlaying ? Icons.play_arrow : Icons.pause),
-                      color: theme.inversePrimary,
-                      onPressed: () {
-                        playlistProvider.pauseOrResume();
-                        setState(() {});
-                      },
-                    ),
-
-                    IconButton(
-                      icon: const Icon(Icons.skip_next),
-                      color: theme.inversePrimary,
-                      onPressed: goToNextSong,
+                      child: Slider(
+                        min: 0,
+                        max: playlistProvider.totalDuration.inSeconds.toDouble(),
+                        value: playlistProvider.currentDuration.inSeconds.toDouble(),
+                        activeColor: Colors.green,
+                        onChanged: (value) {
+                          // Update the slider position dynamically when the user drags
+                          playlistProvider.updateCurrentDuration(Duration(seconds: value.toInt()));
+                        },
+                        onChangeEnd: (value) {
+                          // Seek to the new position in the audio file when the drag ends
+                          playlistProvider.seek(Duration(seconds: value.toInt()));
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -236,13 +260,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+
+
   // Show search dialog
   void showSearchDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Search Songs"),
+          title: const Text("Search"),
           content: TextField(
             controller: searchController,
             onChanged: (value) => filterSongs(value),
