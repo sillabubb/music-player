@@ -39,12 +39,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void playPauseSong() {
-    setState(() {
-      isPlaying = !isPlaying;
-    });
-  }
-
   void goToNextSong() {
     setState(() {
       if (selectedSongIndex < playlistProvider.playlist.length - 1) {
@@ -220,10 +214,14 @@ class _HomePageState extends State<HomePage> {
                       onPressed: goToPreviousSong,
                     ),
                     IconButton(
-                      icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+                      icon: Icon(playlistProvider.isPlaying ? Icons.play_arrow : Icons.pause),
                       color: theme.inversePrimary,
-                      onPressed: playPauseSong,
+                      onPressed: () {
+                        playlistProvider.pauseOrResume();
+                        setState(() {});
+                      },
                     ),
+
                     IconButton(
                       icon: const Icon(Icons.skip_next),
                       color: theme.inversePrimary,
