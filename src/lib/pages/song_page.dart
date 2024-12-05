@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:minimalist_music_player/components/neu_box.dart';
 import 'package:minimalist_music_player/models/playlist_provider.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 
 class SongPage extends StatelessWidget {
   const SongPage({super.key});
@@ -90,7 +91,10 @@ class SongPage extends StatelessWidget {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                          '${currentSong.songName} added to favorites!'),
+                                        '${currentSong.songName} added to favorites!',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      backgroundColor: Colors.green,
                                       duration: const Duration(seconds: 2),
                                     ),
                                   );
@@ -155,15 +159,31 @@ class SongPage extends StatelessWidget {
                                 IconButton(
                                   icon: Icon(
                                     Icons.favorite,
-                                    color: isFavorite
-                                        ? Colors.red
-                                        : Colors.grey,
+                                    color: isFavorite ? Colors.red : Colors.grey,
                                   ),
                                   onPressed: () {
-                                    playlistProvider
-                                        .toggleFavorite(currentSong);
+                                    playlistProvider.toggleFavorite(currentSong);
+
+                                    // Determine the message based on the current favorite status
+                                    final String message = isFavorite
+                                        ? '${currentSong.songName} removed from favorites!'
+                                        : '${currentSong.songName} added to favorites!';
+
+                                    // Show a SnackBar with the appropriate message
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          message,
+                                          style: const TextStyle(color: Colors.white),
+                                        ),
+                                        backgroundColor: isFavorite ? Colors.red : Colors.green,
+                                        duration: const Duration(seconds: 2),
+                                      ),
+                                    );
                                   },
                                 ),
+
+
                               ],
                             ),
                           ),
@@ -194,50 +214,87 @@ class SongPage extends StatelessWidget {
                               // Notes button
                               IconButton(
                                 icon: Icon(
-                                  Icons.note_add,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .inversePrimary,
+                                  playlistProvider.getNoteForCurrentSong().isNotEmpty
+                                      ? Icons.note_rounded
+                                      : Icons.note_add,
+                                  color: Theme.of(context).colorScheme.inversePrimary,
                                 ),
                                 onPressed: () {
+                                  final TextEditingController noteController = TextEditingController(
+                                    text: playlistProvider.getNoteForCurrentSong(),
+                                  );
+
                                   showDialog(
                                     context: context,
                                     builder: (context) {
-                                      final TextEditingController
-                                      noteController =
-                                      TextEditingController(
-                                        text: playlistProvider
-                                            .getNoteForCurrentSong(),
-                                      );
                                       return AlertDialog(
-                                        title: const Text('Add Note'),
+                                        title: Text(
+                                          playlistProvider.getNoteForCurrentSong().isNotEmpty
+                                              ? 'Saved Notes'
+                                              : 'Add Note',
+                                        ),
                                         content: TextField(
                                           controller: noteController,
                                           maxLines: 4,
-                                          decoration:
-                                          const InputDecoration(
-                                            hintText:
-                                            'Enter your note here...',
+                                          readOnly: playlistProvider.getNoteForCurrentSong().isNotEmpty, // Read-only if note exists
+                                          decoration: const InputDecoration(
+                                            hintText: 'Enter your note here...',
                                             border: OutlineInputBorder(),
                                           ),
                                         ),
                                         actions: [
+                                          if (playlistProvider.getNoteForCurrentSong().isNotEmpty)
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.pop(context); // Close current dialog
+                                                // Open a new dialog to edit the note
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      title: const Text('Edit Note'),
+                                                      content: TextField(
+                                                        controller: noteController,
+                                                        maxLines: 4,
+                                                        decoration: const InputDecoration(
+                                                          hintText: 'Edit your note here...',
+                                                          border: OutlineInputBorder(),
+                                                        ),
+                                                      ),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(context); // Close edit dialog
+                                                          },
+                                                          child: const Text('Cancel'),
+                                                        ),
+                                                        ElevatedButton(
+                                                          onPressed: () {
+                                                            playlistProvider.setNoteForCurrentSong(noteController.text);
+                                                            Navigator.pop(context); // Save and close edit dialog
+                                                          },
+                                                          child: const Text('Save Edited Note'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: const Text('Edit Note'),
+                                            ),
+                                          if (playlistProvider.getNoteForCurrentSong().isEmpty)
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                playlistProvider.setNoteForCurrentSong(noteController.text);
+                                                Navigator.pop(context); // Save and close
+                                              },
+                                              child: const Text('Save'),
+                                            ),
                                           TextButton(
                                             onPressed: () {
-                                              Navigator.pop(
-                                                  context); // Close dialog
+                                              Navigator.pop(context); // Close dialog
                                             },
-                                            child: const Text('Cancel'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              playlistProvider
-                                                  .setNoteForCurrentSong(
-                                                  noteController.text);
-                                              Navigator.pop(
-                                                  context); // Save and close
-                                            },
-                                            child: const Text('Save'),
+                                            child: const Text('Close'),
                                           ),
                                         ],
                                       );
@@ -245,42 +302,86 @@ class SongPage extends StatelessWidget {
                                   );
                                 },
                               ),
+
+
                               // Lyrics button
                               IconButton(
                                 icon: Icon(
                                   Icons.music_note_outlined,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .inversePrimary,
+                                  color: Theme.of(context).colorScheme.inversePrimary,
                                 ),
                                 onPressed: () {
                                   showDialog(
                                     context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: Text(
-                                          '${currentSong.songName}'),
-                                      content: SingleChildScrollView(
-                                        // Automatically scrolls when content exceeds dialog height
-                                        child: Text(
-                                          currentSong.lyrics,
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .inversePrimary,
-                                          ),
-                                        ),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: const Text('Close'),
-                                        ),
-                                      ],
-                                    ),
+                                    builder: (context) {
+                                      final ScrollController scrollController = ScrollController();
+                                      bool isAutoScrolling = false;
+                                      Timer? autoScrollTimer;
+
+                                      void startAutoScroll() {
+                                        autoScrollTimer = Timer.periodic(const Duration(milliseconds: 50), (_) {
+                                          if (scrollController.position.pixels <
+                                              scrollController.position.maxScrollExtent) {
+                                            scrollController.animateTo(
+                                              scrollController.position.pixels + 1, // Adjust speed here
+                                              duration: const Duration(milliseconds: 50),
+                                              curve: Curves.linear,
+                                            );
+                                          } else {
+                                            autoScrollTimer?.cancel();
+                                          }
+                                        });
+                                      }
+
+                                      void stopAutoScroll() {
+                                        autoScrollTimer?.cancel();
+                                      }
+
+                                      return StatefulBuilder(
+                                        builder: (context, setState) {
+                                          return AlertDialog(
+                                            title: Text('${currentSong.songName}'),
+                                            content: SingleChildScrollView(
+                                              controller: scrollController,
+                                              child: Text(
+                                                currentSong.lyrics,
+                                                style: TextStyle(
+                                                  color: Theme.of(context).colorScheme.inversePrimary,
+                                                ),
+                                              ),
+                                            ),
+                                            actions: [
+                                              IconButton(
+                                                icon: Icon(
+                                                  isAutoScrolling
+                                                      ? Icons.pause_circle_filled
+                                                      : Icons.play_circle_filled,
+                                                  color: Theme.of(context).colorScheme.inversePrimary,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    if (isAutoScrolling) {
+                                                      stopAutoScroll();
+                                                    } else {
+                                                      startAutoScroll();
+                                                    }
+                                                    isAutoScrolling = !isAutoScrolling;
+                                                  });
+                                                },
+                                              ),
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(context),
+                                                child: const Text('Close'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
                                   );
                                 },
                               ),
+
                               // End time
                               Text(
                                 formatTime(

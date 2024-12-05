@@ -180,33 +180,6 @@ class FavoritesPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8.0),
-                      // Slider for playback progress
-                      SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          thumbShape: const RoundSliderThumbShape(
-                            enabledThumbRadius: 0,
-                          ),
-                        ),
-                        child: Slider(
-                          min: 0,
-                          max: playlistProvider.totalDuration.inSeconds
-                              .toDouble(),
-                          value: playlistProvider.currentDuration.inSeconds
-                              .toDouble(),
-                          activeColor: Colors.green,
-                          onChanged: (value) {
-                            // Update the slider dynamically
-                            playlistProvider.updateCurrentDuration(
-                                Duration(seconds: value.toInt()));
-                          },
-                          onChangeEnd: (value) {
-                            // Seek the audio to the dragged position
-                            playlistProvider
-                                .seek(Duration(seconds: value.toInt()));
-                          },
-                        ),
-                      ),
                     ],
                   ),
                 ),

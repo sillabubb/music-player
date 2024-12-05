@@ -216,40 +216,25 @@ class _HomePageState extends State<HomePage> {
                           onPressed: goToPreviousSong,
                         ),
                         IconButton(
-                          icon: Icon(playlistProvider.isPlaying ? Icons.pause : Icons.play_arrow),
+                          icon: Consumer<PlaylistProvider>(
+                            builder: (context, playlistProvider, child) {
+                              return Icon(
+                                playlistProvider.isPlaying ? Icons.pause : Icons.play_arrow,
+                              );
+                            },
+                          ),
                           color: theme.inversePrimary,
                           onPressed: () {
-                            playlistProvider.pauseOrResume();
-                            setState(() {});
+                            Provider.of<PlaylistProvider>(context, listen: false).pauseOrResume();
                           },
                         ),
+
                         IconButton(
                           icon: const Icon(Icons.skip_next),
                           color: theme.inversePrimary,
                           onPressed: goToNextSong,
                         ),
                       ],
-                    ),
-                    SliderTheme(
-                      data: SliderTheme.of(context).copyWith(
-                        thumbShape: const RoundSliderThumbShape(
-                          enabledThumbRadius: 0,
-                        ),
-                      ),
-                      child: Slider(
-                        min: 0,
-                        max: playlistProvider.totalDuration.inSeconds.toDouble(),
-                        value: playlistProvider.currentDuration.inSeconds.toDouble(),
-                        activeColor: Colors.green,
-                        onChanged: (value) {
-                          // Update the slider position dynamically when the user drags
-                          playlistProvider.updateCurrentDuration(Duration(seconds: value.toInt()));
-                        },
-                        onChangeEnd: (value) {
-                          // Seek to the new position in the audio file when the drag ends
-                          playlistProvider.seek(Duration(seconds: value.toInt()));
-                        },
-                      ),
                     ),
                   ],
                 ),
