@@ -1,133 +1,74 @@
 import 'package:flutter/material.dart';
-import 'package:minimalist_music_player/pages/favorites_page.dart';
-import 'package:minimalist_music_player/pages/settings_page.dart';
-import 'package:minimalist_music_player/pages/about_us_page.dart';
+import '../pages/favorites_page.dart';
+import '../pages/settings_page.dart';
+import '../pages/about_us_page.dart';
 
-class MyDrawer extends StatefulWidget {
+
+class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
 
-  @override
-  State<MyDrawer> createState() => _MyDrawerState();
-}
 
-class _MyDrawerState extends State<MyDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Colors.black87,
       child: Column(
         children: [
-          // Custom Logo (huni.png)
           DrawerHeader(
             child: Center(
               child: Image.asset(
-                'assets/images/huni.png', // Path to your logo
-                width: 170, // Adjust size as needed
-                height: 170,
-                fit: BoxFit.contain,
+            'assets/images/huni.png', // Path to your logo
+            width: 170, // Adjust size as needed
+            height: 170,
+            fit: BoxFit.contain,
               ),
             ),
           ),
-
-          // Home tile
-          Padding(
-            padding: const EdgeInsets.only(top: 25.0, left: 25.0),
-            child: ListTile(
-              title: Text(
-                "H O M E",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                ),
-              ),
-              leading: Icon(
-                Icons.home,
-                color: Theme.of(context).colorScheme.inversePrimary,
-              ),
-              onTap: () {
-                Navigator.pop(context);
-              },
+          _buildDrawerTile(
+            context,
+            icon: Icons.home,
+            label: "Home",
+            onTap: () => Navigator.pop(context),
+          ),
+          _buildDrawerTile(
+            context,
+            icon: Icons.favorite,
+            label: "Favorites",
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const FavoritesPage()),
             ),
           ),
-
-          // Favorites tile
-          Padding(
-            padding: const EdgeInsets.only(top: 25.0, left: 25.0),
-            child: ListTile(
-              title: Text(
-                "F A V O R I T E S",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                ),
-              ),
-              leading: const Icon(
-                Icons.favorite,
-                color: Colors.red,
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const FavoritesPage(),
-                  ),
-                );
-              },
+          _buildDrawerTile(
+            context,
+            icon: Icons.settings,
+            label: "Settings",
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsPage()),
             ),
           ),
-
-          // Settings tile
-          Padding(
-            padding: const EdgeInsets.only(top: 25.0, left: 25.0),
-            child: ListTile(
-              title: Text(
-                "S E T T I N G S",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                ),
-              ),
-              leading: Icon(
-                Icons.settings,
-                color: Theme.of(context).colorScheme.inversePrimary,
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SettingsPage(),
-                  ),
-                );
-              },
-            ),
-          ),
-
-          // About Us tile
-          Padding(
-            padding: const EdgeInsets.only(top: 25.0, left: 25.0),
-            child: ListTile(
-              title: Text(
-                "A B O U T  U S",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                ),
-              ),
-              leading: Icon(
-                Icons.info,
-                color: Theme.of(context).colorScheme.inversePrimary,
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AboutUsPage(),
-                  ),
-                );
-              },
+          _buildDrawerTile(
+            context,
+            icon: Icons.info,
+            label: "About Us",
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AboutUsPage()),
             ),
           ),
         ],
       ),
+    );
+  }
+
+
+  Widget _buildDrawerTile(BuildContext context,
+      {required IconData icon, required String label, required VoidCallback onTap}) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.green),
+      title: Text(label, style: TextStyle(color: Colors.white, fontSize: 16)),
+      onTap: onTap,
     );
   }
 }

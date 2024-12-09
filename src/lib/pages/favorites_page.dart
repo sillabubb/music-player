@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:minimalist_music_player/models/playlist_provider.dart';
 import 'package:minimalist_music_player/pages/song_page.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
 
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
@@ -12,8 +13,9 @@ class FavoritesPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("F A V O R I T E S"),
-        backgroundColor: theme.background,
+        backgroundColor: CupertinoColors.activeGreen,
+        title: Center(
+            child: Text("F A V O R I T E S" + "         ")),
         iconTheme: IconThemeData(color: theme.inversePrimary),
         titleTextStyle: TextStyle(
           color: theme.inversePrimary,

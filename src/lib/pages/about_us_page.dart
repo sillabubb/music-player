@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class AboutUsPage extends StatelessWidget {
   const AboutUsPage({super.key});
@@ -9,13 +10,13 @@ class AboutUsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("About Us"),
-        backgroundColor: theme.background,
+        backgroundColor: CupertinoColors.activeGreen,
+        title: const Center(
+            child: Text("A B O U T   U S" + "           ")),
         iconTheme: IconThemeData(color: theme.inversePrimary),
         titleTextStyle: TextStyle(
           color: theme.inversePrimary,
           fontSize: 20,
-          fontWeight: FontWeight.bold,
         ),
       ),
       backgroundColor: theme.background,
@@ -25,7 +26,7 @@ class AboutUsPage extends StatelessWidget {
           children: [
 
             Container(
-              color: theme.secondary,
+              color: theme.background,
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

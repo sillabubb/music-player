@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:minimalist_music_player/components/neu_box.dart';
 import 'package:minimalist_music_player/models/playlist_provider.dart';
@@ -23,94 +24,60 @@ class SongPage extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: Theme.of(context).colorScheme.background,
+          appBar: AppBar(
+            backgroundColor: CupertinoColors.activeGreen,
+            title: Center(
+              child: Text(
+                "P L A Y L I S T" + "   ",
+                style: TextStyle(
+                color: Theme.of(context).colorScheme.inversePrimary,
+                ),
+              ),
+            ),
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+            actions: [
+              PopupMenuButton<String>(
+                icon: Icon(
+                  Icons.menu,
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                ),
+                onSelected: (value) {
+                  if (value == 'add_to_favorites') {
+                    playlistProvider.toggleFavorite(currentSong);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '${currentSong.songName} added to favorites!',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.green,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem<String>(
+                    value: 'add_to_favorites',
+                    child: Text('Add to Favorites'),
+                  ),
+                ],
+              ),
+            ],
+          ),
           body: SafeArea(
             child: Padding(
-              padding:
-              const EdgeInsets.only(left: 25.0, right: 25.0, bottom: 25.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0, bottom: 25.0),
               child: SingleChildScrollView(
-                // Wrap the Column inside SingleChildScrollView
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Header
-                    const SizedBox(height: 25),
-                    Container(
-                      height: 25,
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 20.0),
-                      alignment: Alignment.center,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Back button
-                          Container(
-                            height: 60,
-                            width: 60,
-                            alignment: Alignment.center,
-                            child: IconButton(
-                              onPressed: () => Navigator.pop(context),
-                              icon: Icon(
-                                Icons.arrow_back,
-                                size: 30,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .inversePrimary,
-                              ),
-                            ),
-                          ),
-                          // Title
-                          Expanded(
-                            child: Text(
-                              "P L A Y L I S T",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.normal,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .inversePrimary,
-                              ),
-                            ),
-                          ),
-                          // Menu button with PopupMenuButton
-                          Container(
-                            height: 60,
-                            width: 60,
-                            alignment: Alignment.center,
-                            child: PopupMenuButton<String>(
-                              icon: Icon(
-                                Icons.menu,
-                                size: 30,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .inversePrimary,
-                              ),
-                              onSelected: (value) {
-                                if (value == 'add_to_favorites') {
-                                  playlistProvider.toggleFavorite(currentSong);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        '${currentSong.songName} added to favorites!',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      backgroundColor: Colors.green,
-                                      duration: const Duration(seconds: 2),
-                                    ),
-                                  );
-                                }
-                              },
-                              itemBuilder: (context) => [
-                                const PopupMenuItem<String>(
-                                  value: 'add_to_favorites',
-                                  child: Text('Add to Favorites'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     const SizedBox(height: 25),
                     // Album artwork
                     NeuBox(
@@ -125,31 +92,25 @@ class SongPage extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.all(15.0),
                             child: Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 // Song and artist details
                                 Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       currentSong.songName,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20.0,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .inversePrimary,
+                                        color: Theme.of(context).colorScheme.inversePrimary,
                                       ),
                                     ),
                                     Text(
                                       currentSong.artistName,
                                       style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .inversePrimary,
+                                        color: Theme.of(context).colorScheme.inversePrimary,
                                       ),
                                     ),
                                   ],
@@ -182,8 +143,6 @@ class SongPage extends StatelessWidget {
                                     );
                                   },
                                 ),
-
-
                               ],
                             ),
                           ),

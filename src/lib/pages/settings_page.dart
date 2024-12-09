@@ -8,15 +8,24 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the current dark mode setting
+    final isDarkMode = Provider.of<ThemeProvider>(context, listen: true).isDarkMode;
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        title: Text(
-          " S E T T I N G S",
-          style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+        backgroundColor: CupertinoColors.activeGreen,
+        title: Center(
+          child: Text(
+            "S E T T I N G S" + "         ",
+            style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+          ),
         ),
         elevation: 0,
+        iconTheme: IconThemeData(
+          color: isDarkMode ? Colors.white : Colors.black,
+        ),
+        titleSpacing: 0, // This removes the default padding around the title
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -31,16 +40,15 @@ class SettingsPage extends StatelessWidget {
             Text(
               "Dark Mode",
               style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.inversePrimary),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
             ),
             CupertinoSwitch(
-              value:
-                  Provider.of<ThemeProvider>(context, listen: false).isDarkMode,
+              value: isDarkMode,
               onChanged: (value) =>
-                  Provider.of<ThemeProvider>(context, listen: false)
-                      .toggleTheme(),
-            )
+                  Provider.of<ThemeProvider>(context, listen: false).toggleTheme(),
+            ),
           ],
         ),
       ),

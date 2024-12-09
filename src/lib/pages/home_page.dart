@@ -4,21 +4,28 @@ import 'package:minimalist_music_player/models/playlist_provider.dart';
 import 'package:minimalist_music_player/models/song.dart';
 import 'package:minimalist_music_player/pages/song_page.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
+
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
+
 
 class _HomePageState extends State<HomePage> {
   late final PlaylistProvider playlistProvider;
   int selectedSongIndex = -1;
   bool isPlaying = false;
 
+
   TextEditingController searchController = TextEditingController();
   List<Song> filteredSongs = []; // For storing filtered results
+
 
   @override
   void initState() {
@@ -26,6 +33,7 @@ class _HomePageState extends State<HomePage> {
     playlistProvider = Provider.of<PlaylistProvider>(context, listen: false);
     filteredSongs = playlistProvider.playlist; // Initially show all songs
   }
+
 
   void goToSong(int index) {
     playlistProvider.setCurrentSongIndex(index);
@@ -39,6 +47,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+
   void goToNextSong() {
     setState(() {
       if (selectedSongIndex < playlistProvider.playlist.length - 1) {
@@ -49,6 +58,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+
   void goToPreviousSong() {
     setState(() {
       if (selectedSongIndex > 0) {
@@ -58,6 +68,7 @@ class _HomePageState extends State<HomePage> {
       }
     });
   }
+
 
   // Filter songs based on the search query
   void filterSongs(String query) {
@@ -78,21 +89,24 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
 
+
     return Scaffold(
       backgroundColor: theme.background,
       appBar: AppBar(
-        backgroundColor: theme.background,
-        title: Text(
-          " P L A Y L I S T ",
-          style: TextStyle(color: theme.inversePrimary),
+        backgroundColor: CupertinoColors.activeGreen,
+        title: Center(
+          child: Text(
+            " P L A Y L I S T " + "   ",
+            style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+          ),
         ),
         elevation: 0,
         actions: [
-          // Search Icon Button
           IconButton(
             icon: const Icon(Icons.search),
             color: theme.inversePrimary,
@@ -101,6 +115,17 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ],
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              color: theme.inversePrimary,
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
       ),
       drawer: Theme(
         data: Theme.of(context).copyWith(
@@ -118,6 +143,7 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (context, index) {
                     final Song song = filteredSongs[index];
                     final bool isSelected = playlistProvider.playlist.indexOf(song) == selectedSongIndex;
+
 
                     return GestureDetector(
                       onTap: () => goToSong(playlistProvider.playlist.indexOf(song)), // Navigate to SongPage
@@ -170,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                 );
               },
               child: Container(
-                color: theme.secondary.withOpacity(0.5),
+                color: Colors.black.withOpacity(0.5),
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
                   children: [
@@ -180,8 +206,7 @@ class _HomePageState extends State<HomePage> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.asset(
-                            playlistProvider.playlist[selectedSongIndex]
-                                .albumArtImagePath,
+                            playlistProvider.playlist[selectedSongIndex].albumArtImagePath,
                             width: 50,
                             height: 50,
                             fit: BoxFit.cover,
@@ -193,16 +218,14 @@ class _HomePageState extends State<HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                playlistProvider
-                                    .playlist[selectedSongIndex].songName,
+                                playlistProvider.playlist[selectedSongIndex].songName,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: theme.inversePrimary,
                                 ),
                               ),
                               Text(
-                                playlistProvider
-                                    .playlist[selectedSongIndex].artistName,
+                                playlistProvider.playlist[selectedSongIndex].artistName,
                                 style: TextStyle(
                                   color: theme.inversePrimary.withOpacity(0.7),
                                 ),
@@ -228,7 +251,6 @@ class _HomePageState extends State<HomePage> {
                             Provider.of<PlaylistProvider>(context, listen: false).pauseOrResume();
                           },
                         ),
-
                         IconButton(
                           icon: const Icon(Icons.skip_next),
                           color: theme.inversePrimary,
@@ -244,8 +266,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-
 
   // Show search dialog
   void showSearchDialog(BuildContext context) {

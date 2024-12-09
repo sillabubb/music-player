@@ -1,7 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:minimalist_music_player/models/song.dart';
-import 'dart:async';
 
 class PlaylistProvider extends ChangeNotifier {
   final List<Song> _playlist = [
